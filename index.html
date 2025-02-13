@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cosmic Love for Sahana</title>
+  <style>
+    /* General Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* Fullscreen Canvas */
+    body, html {
+      height: 100%;
+      overflow: hidden;
+      font-family: Arial, sans-serif;
+      color: white;
+      background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
+    }
+
+    /* Welcome Message */
+    #welcome-message {
+      position: absolute;
+      top: 20%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      z-index: 10;
+    }
+
+    #welcome-message h1 {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+    }
+
+    #welcome-message p {
+      font-size: 1.2rem;
+    }
+
+    /* Hidden Content */
+    #hidden-content {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      text-align: center;
+      opacity: 0;
+      transition: opacity 1s ease-in-out;
+    }
+
+    #hidden-content.visible {
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <!-- Background Canvas for 3D Universe -->
+  <canvas id="universe"></canvas>
+
+  <!-- Welcome Message -->
+  <div id="welcome-message">
+    <h1>Welcome to Our Universe, Sahana</h1>
+    <p>Scroll to explore the stars and discover our love story.</p>
+  </div>
+
+  <!-- Hidden Content (Revealed via Scrolling) -->
+  <div id="hidden-content">
+    <h2>Sahana in the Stars</h2>
+    <p>Your name shines brightly in the cosmos.</p>
+  </div>
+
+  <!-- Three.js Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r146/three.min.js"></script>
+  <script>
+    // Scene Setup
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('universe') });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+
+    // Create Stars
+    function createStars() {
+      const starGeometry = new THREE.BufferGeometry();
+      const starMaterial = new THREE.PointsMaterial({ color: 0xffffff });
+
+      const starVertices = [];
+      for (let i = 0; i < 1000; i++) {
+        const x = (Math.random() - 0.5) * 2000;
+        const y = (Math.random() - 0.5) * 2000;
+        const z = (Math.random() - 0.5) * 2000;
+        starVertices.push(x, y, z);
+      }
+
+      starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starVertices, 3));
+      const stars = new THREE.Points(starGeometry, starMaterial);
+      scene.add(stars);
+    }
+
+    createStars();
+
+    // Glowing Heart Planet
+    const heartGeometry = new THREE.SphereGeometry(5, 32, 32);
+    const heartMaterial = new THREE.MeshBasicMaterial({ color: 0xff69b4 });
+    const heartPlanet = new THREE.Mesh(heartGeometry, heartMaterial);
+    heartPlanet.position.set(0, 0, -50);
+    scene.add(heartPlanet);
+
+    // Camera Position
+    camera.position.z = 50;
+
+    // Animation Loop
+    function animate() {
+      requestAnimationFrame(animate);
+
+      // Rotate Heart Planet
+      heartPlanet.rotation.x += 0.01;
+      heartPlanet.rotation.y += 0.01;
+
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    // Reveal Hidden Content on Scroll
+    window.addEventListener('scroll', () => {
+      const hiddenContent = document.getElementById('hidden-content');
+      if (window.scrollY > 200) {
+        hiddenContent.classList.add('visible');
+      }
+    });
+
+    // Shooting Stars
+    function createShootingStar() {
+      const geometry = new THREE.SphereGeometry(0.1, 32, 32);
+      const material = new THREE.MeshBasicMaterial({ color: 0xffd700 });
+      const star = new THREE.Mesh(geometry, material);
+
+      star.position.set(
+        (Math.random() - 0.5) * 200,
+        Math.random() * 100,
+        -Math.random() * 1000
+      );
+
+      scene.add(star);
+
+      // Animate Shooting Star
+      function moveStar() {
+        star.position.z += 10;
+        if (star.position.z > 0) {
+          scene.remove(star);
+        } else {
+          requestAnimationFrame(moveStar);
+        }
+      }
+      moveStar();
+    }
+
+    setInterval(createShootingStar, 2000); // Spawn a shooting star every 2 seconds
+
+    // Constellations That Form "Sahana"
+    function createConstellation(name) {
+      const points = [];
+      const letters = name.split('');
+      const spacing = 10;
+
+      letters.forEach((letter, index) => {
+        const x = index * spacing - (name.length * spacing) / 2;
+        const y = 0;
+        const z = -50;
+        points.push(new THREE.Vector3(x, y, z));
+      });
+
+      const lineGeometry = new THREE.BufferGeometry().setFromPoints(points);
+      const lineMaterial = new THREE.LineBasicMaterial({ color: 0xffffff });
+      const constellationLine = new THREE.Line(lineGeometry, lineMaterial);
+      scene.add(constellationLine);
+
+      // Add Stardust Effect
+      const stardust = new THREE.Points(
+        new THREE.BufferGeometry().setFromPoints(points),
+        new THREE.PointsMaterial({ color: 0xffff00, size: 0.5 })
+      );
+      scene.add(stardust);
+    }
+
+    createConstellation("Sahana"); // Her name appears as a constellation
+  </script>
+</body>
+</html>
